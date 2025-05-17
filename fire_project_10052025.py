@@ -23,12 +23,6 @@ app = Flask(__name__)
 
 from ultralytics import YOLO
 
-!pip install ultralytics
-
-!pip install twilio
-
-!pip install ultralytics torch flask twilio firebase-admin
-
 # ======================
 # CONFIGURATION
 # ======================
@@ -47,10 +41,6 @@ CLASS_MAP = {
     26: "smoke",
     27: "flames"
 }
-
-!pip install ultralytics flask opencv-python
-
-!pip install -q streamlit
 
 import cv2
 import streamlit as st
