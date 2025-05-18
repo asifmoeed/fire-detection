@@ -18,17 +18,8 @@ from firebase_admin import credentials, messaging
 from ultralytics import YOLO
 import requests
 
-# Initialize Flask
-app = Flask(__name__)
-
 from ultralytics import YOLO
 
-# ======================
-# CONFIGURATION
-# ======================
-TWILIO_SID = "your_twilio_sid"
-TWILIO_TOKEN = "your_twilio_token"
-FCM_CREDENTIALS = "path/to/firebase-key.json"
 
 # Load YOLOv8 model (official Ultralytics implementation)
 model = YOLO("yolov8n.pt")  # Nano version (fastest)
