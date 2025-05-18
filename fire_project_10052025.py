@@ -7,6 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1aUZY2IZkBGk6YbuhLNKpEVUpO67WxJS7
 """
 
+import cv2
 import numpy as np
 from flask import Flask, Response, request, jsonify
 import threading
