@@ -1,5 +1,5 @@
 streamlit==1.32.0
-opencv-python==4.9.0.80
+opencv-python==4.7.0.72
 numpy==1.26.4
 ultralytics==8.1.43
 torch==2.2.1
