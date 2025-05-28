@@ -93,7 +93,7 @@ if cap and model and not st.session_state["stop_detection"]:
                 break
             continue
 
-        results = model.predict(source=frame, conf=conf_threshold)
+        results = model(frame, conf=conf_threshold)
         annotated_frame = results[0].plot()
         annotated_frame = cv2.cvtColor(annotated_frame, cv2.COLOR_BGR2RGB)
         video_placeholder.image(annotated_frame, channels="RGB")
