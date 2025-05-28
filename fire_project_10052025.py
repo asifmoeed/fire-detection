@@ -5,6 +5,7 @@ from ultralytics import YOLO
 import time
 import threading
 
+# Streamlit page config
 st.set_page_config(
     page_title="Fire Detection System",
     page_icon="🔥",
@@ -17,6 +18,7 @@ st.markdown("""
     Adjust the confidence threshold in the sidebar to control sensitivity.
 """)
 
+# Load YOLO model
 @st.cache_resource
 def load_model():
     try:
@@ -27,9 +29,9 @@ def load_model():
         return None
 
 model = load_model()
+FIRE_CLASSES = [25, 26, 27]  # Update as per your trained model
 
-FIRE_CLASSES = [25, 26, 27]  # Customize according to your model's class IDs
-
+# Sidebar settings
 with st.sidebar:
     st.header("Settings")
     camera_option = st.radio("Camera Source:", ("Webcam", "IP Camera"))
@@ -40,7 +42,16 @@ with st.sidebar:
     st.subheader("Alert Options")
     enable_alerts = st.checkbox("Enable Alerts", True)
     alert_cooldown = st.number_input("Alert Cooldown (seconds)", 60, 300, 60)
+    stop_button = st.button("🛑 Stop Detection")
 
+# Set session state flags
+if "stop_detection" not in st.session_state:
+    st.session_state["stop_detection"] = False
+
+if stop_button:
+    st.session_state["stop_detection"] = True
+
+# Camera initialization
 def init_camera():
     if camera_option == "Webcam":
         cap = cv2.VideoCapture(0)
@@ -48,28 +59,31 @@ def init_camera():
         cap = cv2.VideoCapture(ip_cam_url)
     else:
         return None
+
     if not cap.isOpened():
         st.error("Failed to initialize camera!")
         return None
     return cap
 
 cap = init_camera()
-
 video_placeholder = st.empty()
 status_text = st.empty()
 alert_history = st.expander("Alert History", expanded=False)
 
+# Alert function
 def send_alert():
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
     alert_history.write(f"🚨 Alert at {timestamp} - Fire detected!")
     st.session_state.alert_triggered = True
 
+# Initialize session state for alerts
 st.session_state.setdefault("alert_triggered", False)
 
-if cap and model:
+# Main loop
+if cap and model and not st.session_state["stop_detection"]:
     last_alert_time = 0
 
-    while cap.isOpened():
+    while cap.isOpened() and not st.session_state["stop_detection"]:
         ret, frame = cap.read()
         if not ret:
             status_text.warning("Camera feed lost. Reconnecting...")
@@ -98,10 +112,13 @@ if cap and model:
         time.sleep(0.05)
 
     cap.release()
+    st.success("🛑 Detection stopped.")
+
 else:
     st.warning("Please configure a valid camera source")
 
-if st.session_state.get('alert_triggered', False):
+# Play browser sound alert
+if st.session_state.get("alert_triggered", False):
     st.markdown("""
         <audio autoplay>
             <source src="https://soundbible.com/mp3/Fire Truck-SoundBible.com-556371869.mp3" type="audio/mpeg">
